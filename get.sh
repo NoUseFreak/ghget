@@ -27,20 +27,38 @@ check_requirements() {
 }
 
 get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" |
-	grep '"tag_name":' |
-	sed -E 's/.*"([^"]+)".*/\1/'
+    curl --silent "https://api.github.com/repos/$1/releases/latest" |
+        grep '"tag_name":' |
+        sed -E 's/.*"([^"]+)".*/\1/'
 }
 
 download() {
+    downloadTar $1 2>/dev/null || downloadZip $1
+}
+
+downloadTar() {
     local url=https://github.com/${PROJECT}/releases/download/$1/`uname`_amd64.tar.gz
     local target=${TMP_DIR}/${NAME}.tar.gz
-    curl -Ls -o $target $url
+    curl -Ls --fail -o $target $url
+}
+
+downloadZip() {
+    local url=https://github.com/${PROJECT}/releases/download/$1/`uname`_amd64.zip
+    local target=${TMP_DIR}/${NAME}.zip
+    curl -Ls --fail -o $target $url
 }
 
 extract() {
-  rm -rf ${BIN_DIR}/${NAME}
-  tar -xf ${TMP_DIR}/${NAME}.tar.gz -C ${BIN_DIR}/
+    rm -rf ${BIN_DIR}/${NAME}
+    extractTar $1 2>/dev/null || extractZip $1
+}
+
+extractTar() {
+    tar -xf ${TMP_DIR}/${NAME}.tar.gz -C ${BIN_DIR}/
+}
+
+extractZip() {
+    unzip ${TMP_DIR}/${NAME} -d ${BIN_DIR}/
 }
 
 echo "Installing ${NAME} from ${PROJECT}"
