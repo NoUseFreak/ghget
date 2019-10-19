@@ -54,11 +54,13 @@ extract() {
 }
 
 extractTar() {
-    tar -xf ${TMP_DIR}/${NAME}.tar.gz -C ${BIN_DIR}/
+    tar -xf ${TMP_DIR}/${NAME}.tar.gz -C ${TMP_DIR}/${NAME}/
+    mv ${TMP_DIR}/${NAME}/${NAME} ${BIN_DIR}/${NAME}
 }
 
 extractZip() {
-    unzip ${TMP_DIR}/${NAME} -d ${BIN_DIR}/
+    unzip ${TMP_DIR}/${NAME} -d ${TMP_DIR}/${NAME}/
+    mv ${TMP_DIR}/${NAME}/${NAME} ${BIN_DIR}/${NAME}
 }
 
 echo "Installing ${NAME} from ${PROJECT}"
